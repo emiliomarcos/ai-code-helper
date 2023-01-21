@@ -36,23 +36,53 @@ function generateUniqueId() {
   const hexaDecimalString = randomNumber.toString(16);
 
   return `id-${timestamp}-${hexaDecimalString}`;
+}
 
-  function chatStripe(isAi, value, uniqueId) {
-    return (
-      `
-      <div class="wrapper ${isAi && 'ai'}">
-        <div class="chat">
-          <div class="profile">
-            <img
-              src="${isAi ? bot : user}"
-              alt="${isAi ? "bot" : "user"}"
-            />
-          </div>
-          <div class="message">
-          </div>
+function chatStripe(isAi, value, uniqueId) {
+  return (
+    `
+    <div class="wrapper ${isAi && 'ai'}">
+      <div class="chat">
+        <div class="profile">
+          <img
+            src="${isAi ? bot : user}"
+            alt="${isAi ? "bot" : "user"}"
+          />
+        </div>
+        <div class="message" id=${uniqueId}>
+          ${value}
         </div>
       </div>
-      `
-    )
-  }
+    </div>
+    `
+  )
 }
+
+const handleSumbit = async (e) => {
+  e.preventDefault();
+
+  const data = new FormData(form);
+
+  // user
+  chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
+
+  form.reset();
+
+  // bot
+  const uniqueId = generateUniqueId();
+
+  chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const messageDiv = document.getElementById(uniqueId);
+
+  loader(messageDiv);
+}
+
+form.addEventListener("submit", handleSumbit);
+form.addEventListener("keyup", e => {
+  if (e.keyCode ===  13) {
+    handleSumbit(e);
+  }
+})
