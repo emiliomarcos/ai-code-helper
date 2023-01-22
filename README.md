@@ -1,1 +1,1 @@
-# ai-code-helper
+Implemented OpenAI API on a vanilla JavaScript application.
